@@ -52,6 +52,12 @@ class Tetris extends BasicGame{
 	}
 
 	public void keyPressed(int key, char c){
-		mainPanel.keyPressed(key, c);
+		switch(key) {
+			case 200: mainPanel.rotate(); break;
+			case 203: mainPanel.left(); break;
+			case 205: mainPanel.right(); break;
+			case 208: mainPanel.tick(1); break;
+			case 57: mainPanel.tick(0); break;
+		}
 	}
 }

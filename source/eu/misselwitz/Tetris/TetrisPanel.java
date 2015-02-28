@@ -171,7 +171,7 @@ class TetrisPanel {
 	 * Method to update the gravity
 	 * @param ticks How many times to tick
 	 */
-	private void tick(int ticks) {
+	public void tick(int ticks) {
 		// Was it moved or has it collided?
 		boolean moved = false;
 
@@ -296,7 +296,6 @@ class TetrisPanel {
 		g.setColor(Color.white);
 		g.drawString("Score: "+score, x + tileSize/2, y + tileSize/2);
 		g.drawString("Level: "+level, x + tileSize/2, y + tileSize/2+20);
-		g.drawString("MS: "+ms, x + tileSize/2, y + tileSize/2+40);
 	}
 
 	public Tile[][] getTiles() {
@@ -341,17 +340,7 @@ class TetrisPanel {
 		}
 	}
 
-	public void keyPressed(int key, char c){
-		switch(key) {
-			case 200: rotate(rotX, rotY); break;
-			case 203: left(); break;
-			case 205: right(); break;
-			case 208: tick(1); break;
-			case 57: tick(0); break;
-		}
-	}
-
-	private void left() {
+	public void left() {
 		Tile[][] tmp = new Tile[countX][countY];
 		boolean success = true;
 		// Cycle through array and check if there is an active tile on the leftmost column
@@ -385,7 +374,7 @@ class TetrisPanel {
 		}
 	}
 
-	private void right() {
+	public void right() {
 		Tile[][] tmp = new Tile[countX][countY];
 		boolean success = true;
 		// Cycle through array and check if there is an active tile on the rightmost column
@@ -499,6 +488,10 @@ class TetrisPanel {
 			updateGhost();
 		}
 		
+	}
+
+	public void rotate() {
+			rotate(rotX, rotY);
 	}
 
 	/**
