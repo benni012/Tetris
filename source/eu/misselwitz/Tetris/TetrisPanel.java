@@ -1,5 +1,5 @@
-// TODO Change lose condition
 // TODO Add multiplayer support (Controls into another class), new rep?
+
 package eu.misselwitz.Tetris;
 
 import org.newdawn.slick.*;
@@ -9,9 +9,9 @@ import java.util.Random;
 // Enum to represent the state of a tile
 enum TileState {
 	EMPTY,
-	RED,
 	MAGENTA,
 	YELLOW,
+	RED,
 	CYAN,
 	BLUE,
 	LIGHTGRAY,
@@ -195,7 +195,7 @@ class TetrisPanel {
 						moved = true;
 						// When colliding with the floor
 						if (y == tiles[0].length-1) {
-							System.out.println("Floor collided");
+							//System.out.println("Floor collided");
 							disableAllActive();
 							moved = false;
 							break tick;
@@ -207,7 +207,7 @@ class TetrisPanel {
 							// And empty the former tile
 							tmp[x][y] = new Tile(TileState.EMPTY, false);
 						} else {
-							System.out.println("Form collided");
+							//System.out.println("Form collided");
 							// When its neither empty nor active, disable every active tile
 							disableAllActive();
 							moved = false;
@@ -336,7 +336,7 @@ class TetrisPanel {
 			case CYAN: return Color.cyan;
 			case BLUE: return Color.blue;
 			case LIGHTGRAY: return Color.lightGray;
-			case LIME: return new Color(0x00CAFA00);
+			case LIME: return new Color(0x0000FF00);
 			default: System.out.println("Error: Invalid Color Code"); return Color.white;
 		}
 	}
@@ -348,12 +348,6 @@ class TetrisPanel {
 			case 205: right(); break;
 			case 208: tick(1); break;
 			case 57: tick(0); break;
-		}
-
-		if (c == '+') {
-			score+=5;
-			setLevel(score);
-			setMS(level);
 		}
 	}
 
@@ -534,7 +528,7 @@ class TetrisPanel {
 	public void addPiece() {
 		// If there is anything in the top row, end the game
 		for (int arX = 0; arX < tiles.length; arX++) {
-			if(tiles[arX][0].state != TileState.EMPTY) {
+			if(tiles[arX][0].state != TileState.EMPTY && tiles[arX][0].active == false) {
 				System.out.println("Game Over!");
 				System.exit(0);
 			}
@@ -546,8 +540,8 @@ class TetrisPanel {
 		// Get the piece
 		String[] piece = pieces[pieceIndex];
 
-		// Get a random x position, calculate the highest possible index
-		int tx = r.nextInt(countX - 1 - piece[0].length());
+		// X position
+		int tx = (int) countX/2;
 
 		// Get the corresponding color
 		TileState state = TileState.values()[pieceIndex+1];
