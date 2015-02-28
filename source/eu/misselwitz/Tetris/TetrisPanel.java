@@ -1,6 +1,7 @@
-// TODO Tournament Mode
 // TODO 1VS1 Multiplayer, full line gets moved over?
-// TODO COOP Multiplayer, Only clear line when line on other side is full too, implementation? Swap pieces of two players
+// TODO COOP Multiplayer, Only clear line when line on other side is full too, implementation? Swap pieces of two players	
+// TODO Tournament Mode
+// TODO Add Menu
 
 package eu.misselwitz.Tetris;
 
@@ -304,6 +305,10 @@ class TetrisPanel {
 		g.setColor(Color.white);
 		g.drawString("Score: "+score, x + tileSize/2, y + tileSize/2);
 		g.drawString("Level: "+level, x + tileSize/2, y + tileSize/2+23);
+
+		if (gameOver) {
+			g.drawString("GAME OVER!", x+tileSize*2, y+tileSize*2);
+		}
 	}
 
 	public Tile[][] getTiles() {
@@ -349,6 +354,10 @@ class TetrisPanel {
 	}
 
 	public void left() {
+		if (gameOver) {
+			return;
+		}
+
 		Tile[][] tmp = new Tile[countX][countY];
 		boolean success = true;
 		// Cycle through array and check if there is an active tile on the leftmost column
@@ -383,6 +392,10 @@ class TetrisPanel {
 	}
 
 	public void right() {
+		if (gameOver) {
+			return;
+		}
+
 		Tile[][] tmp = new Tile[countX][countY];
 		boolean success = true;
 		// Cycle through array and check if there is an active tile on the rightmost column
@@ -499,7 +512,11 @@ class TetrisPanel {
 	}
 
 	public void rotate() {
-			rotate(rotX, rotY);
+		if (gameOver) {
+			return;
+		}
+
+		rotate(rotX, rotY);
 	}
 
 	/**

@@ -33,8 +33,6 @@ class Tetris extends BasicGame{
 		font1 = new TrueTypeFont(tFont1, true);
 
 		mainPanel = new TetrisPanel(0, 0, 10, 20, 40, 0);
-		//mainPanel.initTiles(TileState.EMPTY, true);
-		int color = 0;
 
 		mainPanel.addPiece();
 	}
@@ -43,7 +41,6 @@ class Tetris extends BasicGame{
 	public void render(GameContainer container, Graphics g) throws SlickException{
 		g.setFont(font1);
 		mainPanel.render(container, g);
-		g.drawString("FPS: "+container.getFPS(), 20, 5);
 	}
 
 	@Override
