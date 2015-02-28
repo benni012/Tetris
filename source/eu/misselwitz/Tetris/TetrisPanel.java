@@ -1,4 +1,6 @@
-// TODO Add multiplayer support (Controls into another class), new rep?
+// TODO Tournament Mode
+// TODO 1VS1 Multiplayer, full line gets moved over?
+// TODO COOP Multiplayer, Only clear line when line on other side is full too, implementation? Swap pieces of two players
 
 package eu.misselwitz.Tetris;
 
@@ -109,6 +111,8 @@ class TetrisPanel {
 
 	int ghostStart, ghostEnd;
 
+	boolean gameOver = false;
+
 
 	/**
 	 * Represents a panel of Tetris tiles
@@ -172,6 +176,10 @@ class TetrisPanel {
 	 * @param ticks How many times to tick
 	 */
 	public void tick(int ticks) {
+		if (gameOver) {
+			return;
+		}
+
 		// Was it moved or has it collided?
 		boolean moved = false;
 
@@ -295,7 +303,7 @@ class TetrisPanel {
 		// Draw the score
 		g.setColor(Color.white);
 		g.drawString("Score: "+score, x + tileSize/2, y + tileSize/2);
-		g.drawString("Level: "+level, x + tileSize/2, y + tileSize/2+20);
+		g.drawString("Level: "+level, x + tileSize/2, y + tileSize/2+23);
 	}
 
 	public Tile[][] getTiles() {
@@ -521,9 +529,8 @@ class TetrisPanel {
 	public void addPiece() {
 		// If there is anything in the top row, end the game
 		for (int arX = 0; arX < tiles.length; arX++) {
-			if(tiles[arX][0].state != TileState.EMPTY && tiles[arX][0].active == false) {
-				System.out.println("Game Over!");
-				System.exit(0);
+			if(tiles[arX][0].state != TileState.EMPTY && tiles[arX][0].active == false) { 
+				gameOver = true;
 			}
 		}
 
