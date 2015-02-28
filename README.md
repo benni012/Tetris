@@ -1,4 +1,4 @@
-# Tetris/Multiteris
+# Tetris/Multitetris
 
 A simple Tetris clone with multiplayer support.
 
