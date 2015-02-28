@@ -1,3 +1,5 @@
+// TODO Change lose condition
+// TODO Add multiplayer support (Controls into another class), new rep?
 package eu.misselwitz.Tetris;
 
 import org.newdawn.slick.*;
@@ -88,6 +90,8 @@ class TetrisPanel {
 	int score = 0;
 	int level;
 
+	Color lastColor;
+
 	int ms;
 	int delta;
 
@@ -102,6 +106,8 @@ class TetrisPanel {
 	Tile[][] tiles;
 
 	int countX, countY;
+
+	int ghostStart, ghostEnd;
 
 
 	/**
@@ -129,8 +135,8 @@ class TetrisPanel {
 	public TetrisPanel(int x, int y, int countX, int countY, int tileSize, int level) {
 		this(x, y, countX, countY, tileSize);
 
-		this.ms = 1000/level;
 		this.level = level;
+		setMS(level);
 	}
 
 	public void update(GameContainer container, int delta) throws SlickException{
@@ -143,6 +149,14 @@ class TetrisPanel {
 				tick(1);
 			}
 		}
+	}
+
+	private void setMS(int level) {
+		this.ms = (int) (1000*Math.pow(0.9, level));
+	}
+
+	private void setLevel(int score) {
+		this.level = (int) score/5;
 	}
 
 	private void initTiles(TileState state, boolean active) {
@@ -158,7 +172,7 @@ class TetrisPanel {
 	 * @param ticks How many times to tick
 	 */
 	private void tick(int ticks) {
-		// Was it moved, or has it collided
+		// Was it moved or has it collided?
 		boolean moved = false;
 
 		Tile[][] tmp = new Tile[countX][countY];
@@ -209,6 +223,9 @@ class TetrisPanel {
 
 				// Make the changes
 				tiles = join(tmp, tiles);
+
+				// Update the ghost
+				updateGhost();
 			}
 		}
 	}
@@ -239,8 +256,8 @@ class TetrisPanel {
 			if (full) {
 				removeRow(arY);
 				score++;
-				level = (int) score / 5 + 1;
-				ms = 1000/level;
+				setLevel(score);
+				setMS(level);
 			}
 		}
 
@@ -263,9 +280,17 @@ class TetrisPanel {
 				// Don't draw when tile is empty
 				if (tiles[arX][arY].state != TileState.EMPTY) {
 					drawTile(x + (arX * tileSize), y + (arY * tileSize), tiles[arX][arY].state, g);
+
+					if (tiles[arX][arY].active) {
+						lastColor = getColorForCode(tiles[arX][arY].state);
+					}
 				}
 			}
 		}
+
+		// Draw the ghost
+		g.setColor(lastColor);
+		g.fillRect(x + (ghostStart*tileSize), y + (countY * tileSize)+5, (ghostEnd-ghostStart+1)*tileSize, 5);
 
 		// Draw the score
 		g.setColor(Color.white);
@@ -311,7 +336,7 @@ class TetrisPanel {
 			case CYAN: return Color.cyan;
 			case BLUE: return Color.blue;
 			case LIGHTGRAY: return Color.lightGray;
-			case LIME: return new Color(0x00CEFF00);
+			case LIME: return new Color(0x00CAFA00);
 			default: System.out.println("Error: Invalid Color Code"); return Color.white;
 		}
 	}
@@ -323,6 +348,12 @@ class TetrisPanel {
 			case 205: right(); break;
 			case 208: tick(1); break;
 			case 57: tick(0); break;
+		}
+
+		if (c == '+') {
+			score+=5;
+			setLevel(score);
+			setMS(level);
 		}
 	}
 
@@ -354,6 +385,9 @@ class TetrisPanel {
 			rotX--;
 			// Make changes
 			tiles = join(tmp, tiles);
+
+			// Update Ghost
+			updateGhost();
 		}
 	}
 
@@ -386,6 +420,27 @@ class TetrisPanel {
 			rotX++;
 			// Make changes
 			tiles = join(tmp, tiles);
+
+			// Update Ghost
+			updateGhost();
+		}
+	}
+
+	private void updateGhost() {
+		boolean first = true;
+
+		for (int arX = 0; arX < tiles.length; arX++) {
+			for (int arY = 0; arY < tiles[0].length; arY++) {
+				if (tiles[arX][arY].active) {
+					// If its is the leftmost active tile
+					if (first) {
+						ghostStart = arX;
+						first = false;
+					} else{
+						ghostEnd = arX;
+					}
+				}
+			}
 		}
 	}
 
@@ -445,6 +500,9 @@ class TetrisPanel {
 			}
 			// Join the two Tile arrays
 			tiles = join(tmp, tiles);
+
+			// Update Ghost
+			updateGhost();
 		}
 		
 	}
@@ -509,5 +567,8 @@ class TetrisPanel {
 				}
 			}
 		}
+
+		// Update Ghost
+		updateGhost();
 	}
 }

@@ -20,7 +20,7 @@ class Tetris extends BasicGame{
 		System.setProperty("org.lwjgl.librarypath", new File("../library/natives").getAbsolutePath());
 		try{
 			AppGameContainer app = new AppGameContainer(new Tetris());
-			app.setDisplayMode(500, 1000, false);
+			app.setDisplayMode(400, 850, false);
 			app.start();
 		}catch(SlickException e){
 			e.printStackTrace();
@@ -32,7 +32,7 @@ class Tetris extends BasicGame{
 		container.setShowFPS(false);
 		font1 = new TrueTypeFont(tFont1, true);
 
-		mainPanel = new TetrisPanel(0, 0, 10, 20, 50, 1);
+		mainPanel = new TetrisPanel(0, 0, 10, 20, 40, 0);
 		//mainPanel.initTiles(TileState.EMPTY, true);
 		int color = 0;
 
@@ -43,7 +43,7 @@ class Tetris extends BasicGame{
 	public void render(GameContainer container, Graphics g) throws SlickException{
 		g.setFont(font1);
 		mainPanel.render(container, g);
-		g.drawString("FPS: "+container.getFPS(), 25, 5);
+		g.drawString("FPS: "+container.getFPS(), 20, 5);
 	}
 
 	@Override
