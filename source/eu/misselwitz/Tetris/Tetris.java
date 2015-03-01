@@ -3,7 +3,7 @@ package eu.misselwitz.Tetris;
 import org.newdawn.slick.*;
 import java.io.File;
 
-class Tetris extends BasicGame{
+public class Tetris extends BasicGame{
 	TetrisPanel mainPanel;
 
 	java.awt.Font tFont1 = new java.awt.Font("PragmataPro", java.awt.Font.PLAIN, 20);

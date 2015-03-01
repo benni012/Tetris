@@ -2,6 +2,9 @@
 // TODO COOP Multiplayer, Only clear line when line on other side is full too, implementation? Swap pieces of two players	
 // TODO Tournament Mode
 // TODO Add Menu
+// TODO (Online) scoreboard
+// TODO Hold
+// TODO Next Piece Preview
 
 package eu.misselwitz.Tetris;
 
@@ -157,7 +160,7 @@ class TetrisPanel {
 	}
 
 	private void setMS(int level) {
-		this.ms = (int) (1000*Math.pow(0.9, level));
+		this.ms = (int) Math.floor(1000*Math.pow(0.9, level));
 	}
 
 	private void setLevel(int score) {
@@ -189,6 +192,7 @@ class TetrisPanel {
 		// Tick until the tile is on the floor
 		if (ticks == 0) {
 			ticks = countY;
+			delta = 0;
 		}
 
 		// TODO More efficient solution

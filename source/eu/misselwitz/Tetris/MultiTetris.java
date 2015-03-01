@@ -3,7 +3,7 @@ package eu.misselwitz.Tetris;
 import org.newdawn.slick.*;
 import java.io.File;
 
-class MultiTetris extends BasicGame{
+public class MultiTetris extends BasicGame{
 	TetrisPanel player1Panel;
 	TetrisPanel player2Panel;
 
