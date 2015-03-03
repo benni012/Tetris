@@ -1,5 +1,5 @@
 @echo off
 cd classes
-java -cp ../library/*; eu.misselwitz.Tetris.Tetris
+/Tools/jdk/bin/java -cp ../library/*; eu.misselwitz.Tetris.Tetris
 cd ..
 pause

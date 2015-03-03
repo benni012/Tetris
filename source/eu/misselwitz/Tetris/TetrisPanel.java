@@ -24,35 +24,7 @@ enum TileState {
 	LIME
 }
 
-// Represents a tile
-class Tile {
-	TileState state;
-	boolean active;
-
-	public Tile(TileState state, boolean active) {
-		this.state = state;
-		// An empty tile can't be active
-		if (state != TileState.EMPTY) {
-			this.active = active;
-		}
-	}
-
-	public Tile(Tile tile) {
-		this.state = tile.state;
-		if (this.state != TileState.EMPTY) {
-			this.active = tile.active;
-		}
-	}
-
-	public void setState(TileState state) {
-		this.state = state;
-		if (state == TileState.EMPTY) {
-			active = false;
-		}
-	}
-}
-
-class TetrisPanel {
+class TetrisPanel extends PieceView{
 	// The possible pieces, sorted by color
 	// # -> Tile
 	// X -> Center
@@ -96,7 +68,9 @@ class TetrisPanel {
 	int score = 0;
 	int level;
 
-	Color lastColor;
+	Random r = new Random();
+
+	int pieceIndex = 0;
 
 	int ms;
 	int delta;
@@ -104,18 +78,11 @@ class TetrisPanel {
 	int rotX, rotY;
 
 
-	int x, y;
-	int tileSize;
-
-
-	// The array to save the tiles, uses the Tile class
-	Tile[][] tiles;
-
-	int countX, countY;
-
 	int ghostStart, ghostEnd;
 
 	boolean gameOver = false;
+
+	PieceView preview;
 
 
 	/**
@@ -125,26 +92,20 @@ class TetrisPanel {
 	 * @param  countX   The count of tiles in x-dimension
 	 * @param  countY   The count of tiles in y-dimension
 	 * @param  tileSize The size of and individiual tile
+	 * @param  level    Level
 	 * @return          TetrisPanel
 	 */
-	public TetrisPanel(int x, int y, int countX, int countY, int tileSize) {
-		this.x = x;
-		this.y = y;
-		this.tileSize = tileSize;
-		this.countX = countX;
-		this.countY = countY;
-
-		// Initialization of the tile array
-		tiles = new Tile[countX][countY];
-
-		initTiles(TileState.EMPTY, false);
-	}
-
 	public TetrisPanel(int x, int y, int countX, int countY, int tileSize, int level) {
-		this(x, y, countX, countY, tileSize);
+		super(x, y, countX, countY, tileSize);
 
 		this.level = level;
 		setMS(level);
+	}
+
+	public TetrisPanel(int x, int y, int countX, int countY, int tileSize, int level, PieceView preview) {
+		this(x, y, countX, countY, tileSize, level);
+
+		this.preview = preview;
 	}
 
 	public void update(GameContainer container, int delta) throws SlickException{
@@ -153,7 +114,6 @@ class TetrisPanel {
 
 			// If one second passed since last tick, next tick
 			if (this.delta / ms >= 1) {
-				this.delta = 0;
 				tick(1);
 			}
 		}
@@ -167,19 +127,13 @@ class TetrisPanel {
 		this.level = (int) score/5;
 	}
 
-	private void initTiles(TileState state, boolean active) {
-		for (int arX = 0; arX < tiles.length; arX++) {
-			for (int arY = 0; arY < tiles[0].length; arY++) {
-				tiles[arX][arY] = new Tile(state, active);
-			}
-		}
-	}
-
 	/**
 	 * Method to update the gravity
 	 * @param ticks How many times to tick
 	 */
 	public void tick(int ticks) {
+		delta = 0;
+
 		if (gameOver) {
 			return;
 		}
@@ -192,7 +146,6 @@ class TetrisPanel {
 		// Tick until the tile is on the floor
 		if (ticks == 0) {
 			ticks = countY;
-			delta = 0;
 		}
 
 		// TODO More efficient solution
@@ -287,22 +240,15 @@ class TetrisPanel {
 	}
 
 	public void render(GameContainer container, Graphics g) throws SlickException{
-		// Cycle through array and draw each tile
-		for (int arX = 0; arX < tiles.length; arX++) {
-			for (int arY = 0; arY < tiles[0].length; arY++) {
-				// Don't draw when tile is empty
-				if (tiles[arX][arY].state != TileState.EMPTY) {
-					drawTile(x + (arX * tileSize), y + (arY * tileSize), tiles[arX][arY].state, g);
-
-					if (tiles[arX][arY].active) {
-						lastColor = getColorForCode(tiles[arX][arY].state);
-					}
-				}
-			}
+		if (preview != null) {
+			// Render the preview
+			preview.render(container, g);
 		}
 
+		super.render(container, g);
+
+
 		// Draw the ghost
-		g.setColor(lastColor);
 		g.fillRect(x + (ghostStart*tileSize), y + (countY * tileSize)+5, (ghostEnd-ghostStart+1)*tileSize, 5);
 
 		// Draw the score
@@ -312,48 +258,6 @@ class TetrisPanel {
 
 		if (gameOver) {
 			g.drawString("GAME OVER!", x+tileSize*2, y+tileSize*2);
-		}
-	}
-
-	public Tile[][] getTiles() {
-		return tiles;
-	}
-
-	public void setTiles(Tile[][] tiles) {
-		this.tiles = tiles;
-	}
-
-	public Tile getTile(int x, int y) {
-		return tiles[x][y];
-	}
-
-	public void setTile(int x, int y, Tile tile) {
-		tiles[x][y] = tile;
-	}
-
-	public void setState(int x, int y, TileState state) {
-		tiles[x][y].setState(state);
-	}
-
-	private void drawTile(int x, int y, TileState colorCode, Graphics g) {
-		// Set the color to the converted color
-		g.setColor(getColorForCode(colorCode));
-
-		// Draw the rect
-		g.fillRect(x, y, tileSize, tileSize);
-	}
-
-	private Color getColorForCode(TileState colorCode) {
-		switch (colorCode) {
-			case EMPTY: return Color.transparent;
-			case RED: return Color.red;
-			case MAGENTA: return Color.magenta;
-			case YELLOW: return Color.yellow;
-			case CYAN: return Color.cyan;
-			case BLUE: return Color.blue;
-			case LIGHTGRAY: return Color.lightGray;
-			case LIME: return new Color(0x0000FF00);
-			default: System.out.println("Error: Invalid Color Code"); return Color.white;
 		}
 	}
 
@@ -548,25 +452,45 @@ class TetrisPanel {
 	}
 
 	public void addPiece() {
-		// If there is anything in the top row, end the game
+		// If there is anything in the top row and there is no active tile, end the game
 		for (int arX = 0; arX < tiles.length; arX++) {
-			if(tiles[arX][0].state != TileState.EMPTY && tiles[arX][0].active == false) { 
+			if(tiles[arX][0].state != TileState.EMPTY && checkForActiveTile() == false) { 
 				gameOver = true;
 			}
 		}
 
-		Random r = new Random();
-		// Get a random index
-		int pieceIndex = r.nextInt(7);
 		// Get the piece
 		String[] piece = pieces[pieceIndex];
 
 		// X position
-		int tx = (int) countX/2;
+		int tx = (int) countX/2-1;
 
 		// Get the corresponding color
 		TileState state = TileState.values()[pieceIndex+1];
 
+		
+		stringToTiles(piece, state, tx);
+
+		
+		pieceIndex = r.nextInt(7);
+		state = TileState.values()[pieceIndex+1];
+		piece = pieces[pieceIndex];
+		updatePreview(piece, state);
+
+		// Update Ghost
+		updateGhost();
+
+		// Get a random index
+	}
+
+	private void updatePreview(String[] piece, TileState state) {
+		if (preview != null) {
+			preview.clear();
+			preview.stringToTiles(piece, state, 0);
+		}
+	}
+
+	public void stringToTiles(String[] piece, TileState state, int tx) {
 		// Start at the topmost possible position 
 		for (int y = piece.length - 1; y >= 0; y--) {
 			for (int x = 0; x < piece[0].length(); x++) {
@@ -582,8 +506,19 @@ class TetrisPanel {
 				}
 			}
 		}
-
-		// Update Ghost
-		updateGhost();
 	}
+
+	private boolean checkForActiveTile() {
+		boolean activeTile = false;
+
+		for (int arX = 0; arX < tiles.length; arX++) {
+			for (int arY = 0; arY < tiles[0].length; arY++) {
+				if (tiles[arX][arY].active) {
+					activeTile = true;
+				}
+			}
+		}
+		return activeTile;
+	}
+
 }
