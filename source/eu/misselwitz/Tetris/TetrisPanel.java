@@ -4,7 +4,6 @@
 // TODO Add Menu
 // TODO (Online) scoreboard
 // TODO Hold
-// TODO Next Piece Preview
 
 package eu.misselwitz.Tetris;
 
