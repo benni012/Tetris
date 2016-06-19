@@ -1,5 +1,3 @@
-package eu.misselwitz.Tetris;
-
 import org.newdawn.slick.*;
 import java.io.File;
 
@@ -17,8 +15,8 @@ public class Tetris extends BasicGame{
 	public static void main(String[] args) {
 		// Init of Slick
 
-		System.setProperty("java.library.path", "../library");
-		System.setProperty("org.lwjgl.librarypath", new File("../library/natives").getAbsolutePath());
+		System.setProperty("java.library.path", "lib");
+		System.setProperty("org.lwjgl.librarypath", new File("natives").getAbsolutePath());
 		try{
 			AppGameContainer app = new AppGameContainer(new Tetris());
 			app.setDisplayMode(560, 850, false);
@@ -33,17 +31,14 @@ public class Tetris extends BasicGame{
 		container.setShowFPS(false);
 		font1 = new TrueTypeFont(tFont1, true);
 
-		preview = new PieceView(440, 40, 3, 4, 40);
-		mainPanel = new TetrisPanel(0, 0, 10, 20, 40, 0, preview);
-
-		mainPanel.addPiece();
+		restart();
 	}
 
 	@Override
 	public void render(GameContainer container, Graphics g) throws SlickException{
 		g.setFont(font1);
 		g.drawRect(0, 0, 400, 800);
-		g.drawRect(400, 0, 160, 200);
+		g.drawRect(400, 0, 120, 200);
 		mainPanel.render(container, g);
 	}
 
@@ -60,5 +55,17 @@ public class Tetris extends BasicGame{
 			case 208: mainPanel.tick(1); break;
 			case 57: mainPanel.tick(0); break;
 		}
+
+		switch(c) {
+			case 'p': mainPanel.pause(); break;
+			case 'r': restart(); break;
+		}
+	}
+
+	private void restart() {
+		preview = new PieceView(420, 20, 3, 4, 40);
+		mainPanel = new TetrisPanel(0, 0, 10, 20, 40, 0, preview);
+
+		mainPanel.addPiece();
 	}
 }

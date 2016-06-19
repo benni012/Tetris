@@ -1,5 +1,3 @@
 @echo off
-cd classes
-/Tools/jdk/bin/java -cp ../library/*; eu.misselwitz.Tetris.Tetris
-cd ..
+java -cp "classes:lib/*" Tetris
 pause
