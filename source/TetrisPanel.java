@@ -1,5 +1,5 @@
 // TODO 1VS1 Multiplayer, full line gets moved over?
-// TODO COOP Multiplayer, Only clear line when line on other side is full too, implementation? Swap pieces of two players
+// TODO COOP Multiplayer, Only clear line when line on other side is full too, implementation? Swap pieces of two players	
 // TODO Tournament Mode
 // TODO Add Menu
 // TODO (Online) scoreboard
@@ -65,7 +65,7 @@ class TetrisPanel extends PieceView{
 	int score = 0;
 	int level;
 
-	Random r = new Random();
+	Random r;
 
 	int pieceIndex = 0;
 
@@ -99,12 +99,20 @@ class TetrisPanel extends PieceView{
 
 		this.level = level;
 		setMS(level);
+
+		this.r = new Random();
+		pieceIndex = r.nextInt(7);
 	}
 
-	public TetrisPanel(int x, int y, int countX, int countY, int tileSize, int level, PieceView preview) {
+	public TetrisPanel(int x, int y, int countX, int countY, int tileSize, int level, PieceView preview, long seed) {
 		this(x, y, countX, countY, tileSize, level);
 
 		this.preview = preview;
+		if (seed != 0)
+			this.r = new Random(seed);
+		else
+			this.r = new Random();
+		pieceIndex = r.nextInt(7);
 	}
 
 	public void update(GameContainer container, int delta) throws SlickException{
@@ -131,8 +139,11 @@ class TetrisPanel extends PieceView{
 	 * @param ticks How many times to tick
 	 */
 	public void tick(int ticks) {
-		delta = 0;
+		if (gameOver)
+			return;
 
+		delta = 0;
+		
 		// Was it moved or has it collided?
 		boolean moved = false;
 
@@ -192,6 +203,9 @@ class TetrisPanel extends PieceView{
 	}
 
 	private void disableAllActive() {
+		if (gameOver)
+			return;
+
 		checkForFullRow();
 		for (int arX = 0; arX < tiles.length; arX++) {
 			for (int arY = 0; arY < tiles[0].length; arY++) {
@@ -226,7 +240,7 @@ class TetrisPanel extends PieceView{
 
 	private void removeRow(int row) {
 		// Remove a row by shifting everything up that row downward
-
+		
 		for (int y = row; y > 0; y--) {
 			for (int x = 0; x < tiles.length; x++) {
 				tiles[x][y] = new Tile(tiles[x][y-1]);
@@ -354,12 +368,12 @@ class TetrisPanel extends PieceView{
 	private void rotate(int centerX, int centerY) {
 		// Approach
 		// To rotate a tile, calculate the relative prosition to the center
-		// Now,
+		// Now, 
 		// x = -dy
 		// y =  dx
 		Tile[][] tmp = new Tile[countX][countY];
 		boolean success = true;
-
+		 
 		// Cycle through the array
 		cycle:
 		for (int arX = 0; arX < tiles.length; arX++) {
@@ -411,7 +425,7 @@ class TetrisPanel extends PieceView{
 			// Update Ghost
 			updateGhost();
 		}
-
+		
 	}
 
 	public void rotate() {
@@ -447,32 +461,33 @@ class TetrisPanel extends PieceView{
 	}
 
 	public void addPiece() {
-		// If there is anything in the top row and there is no active tile, end the game
-		for (int arX = 0; arX < tiles.length; arX++) {
-			if(tiles[arX][0].state != TileState.EMPTY && checkForActiveTile() == false) {
-				gameOver = true;
-			}
-		}
-
-		// Get the piece
+		// Current idx
+		TileState state = TileState.values()[pieceIndex+1];
 		String[] piece = pieces[pieceIndex];
 
 		// X position
 		int tx = (int) countX/2-1;
 
-		// Get the corresponding color
-		TileState state = TileState.values()[pieceIndex+1];
-
+		// add piece
+		for (int arX = 0; arX < piece[0].length(); arX++)
+			for (int arY = 0; arY < piece.length; arY++)
+				if (tiles[arX+tx][arY].state != TileState.EMPTY) {
+					gameOver = true;
+				}
 
 		stringToTiles(piece, state, tx);
 
-
-		// Get a random index
+		// next random index, for preview
 		pieceIndex = r.nextInt(7);
-		state = TileState.values()[pieceIndex+1];
-		piece = pieces[pieceIndex];
-		updatePreview(piece, state);
 
+		// Get the piece
+		piece = pieces[pieceIndex];
+
+		// Get the corresponding color
+		state = TileState.values()[pieceIndex+1];
+		// and update the preview
+		updatePreview(piece, state);
+		
 		// Update Ghost
 		updateGhost();
 
@@ -486,7 +501,7 @@ class TetrisPanel extends PieceView{
 	}
 
 	public void stringToTiles(String[] piece, TileState state, int tx) {
-		// Start at the topmost possible position
+		// Start at the topmost possible position 
 		for (int y = piece.length - 1; y >= 0; y--) {
 			for (int x = 0; x < piece[0].length(); x++) {
 				switch(piece[y].charAt(x)) {

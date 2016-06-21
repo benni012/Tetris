@@ -1,3 +1,3 @@
 @echo off
-java -cp "classes:lib/*" Tetris
+java -cp "classes;lib/*" Tetris
 pause

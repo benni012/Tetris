@@ -64,7 +64,7 @@ public class Tetris extends BasicGame{
 
 	private void restart() {
 		preview = new PieceView(420, 20, 3, 4, 40);
-		mainPanel = new TetrisPanel(0, 0, 10, 20, 40, 0, preview);
+		mainPanel = new TetrisPanel(0, 0, 10, 20, 40, 0, preview, 0);
 
 		mainPanel.addPiece();
 	}

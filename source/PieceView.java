@@ -76,7 +76,7 @@ class PieceView {
 	}
 
 	public void stringToTiles(String[] piece, TileState state, int tx) {
-		// Start at the topmost possible position
+		// Start at the topmost possible position 
 		for (int y = piece.length - 1; y >= 0; y--) {
 			for (int x = 0; x < piece[0].length(); x++) {
 				switch(piece[y].charAt(x)) {
@@ -97,13 +97,13 @@ class PieceView {
 	private Color getColorForCode(TileState colorCode) {
 		switch (colorCode) {
 			case EMPTY: return Color.transparent;
-			case RED: return Color.red;
-			case MAGENTA: return Color.magenta;
-			case YELLOW: return Color.yellow;
-			case CYAN: return Color.cyan;
-			case BLUE: return Color.blue;
-			case LIGHTGRAY: return Color.lightGray;
-			case LIME: return new Color(0x0000FF00);
+			case RED: return new Color(0x00914145);
+			case MAGENTA: return new Color(0x009555ad);
+			case YELLOW: return new Color(0x00ddce8b);
+			case CYAN: return new Color(0x009eb6e1);
+			case BLUE: return new Color(0x00367a8f);
+			case LIGHTGRAY: return new Color(0x00987a9d);
+			case LIME: return new Color(0x00a39f3d);
 			default: System.out.println("Error: Invalid Color Code"); return Color.white;
 		}
 	}

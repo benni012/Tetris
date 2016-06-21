@@ -1,5 +1,6 @@
 import org.newdawn.slick.*;
 import java.io.File;
+import java.util.Random;
 
 public class MultiTetris extends BasicGame{
 	TetrisPanel player1Panel;
@@ -58,6 +59,7 @@ public class MultiTetris extends BasicGame{
 			case 205: player2Panel.right(); break;
 			case 208: player2Panel.tick(1); break;
 			case 157: player2Panel.tick(0); break;
+			case 29: player1Panel.tick(0); break;
 		}
 
 		switch(c) {
@@ -65,19 +67,18 @@ public class MultiTetris extends BasicGame{
 			case 'a': player1Panel.left(); break;
 			case 'd': player1Panel.right(); break;
 			case 's': player1Panel.tick(1); break;
-			case 'x': player1Panel.tick(0); break;
-
 			case 'p': player1Panel.pause(); player2Panel.pause(); break;
 			case 'r': restart(); break;
 		}
 	}
 
 	private void restart() {
+		long seed = System.currentTimeMillis();
 		player1Preview = new PieceView(20, 20, 3, 4, 40);
 		player2Preview = new PieceView(940, 20, 3, 4, 40);
 
-		player1Panel = new TetrisPanel(120, 0, 10, 20, 40, 0, player1Preview);
-		player2Panel = new TetrisPanel(520, 0, 10, 20, 40, 0, player2Preview);
+		player1Panel = new TetrisPanel(120, 0, 10, 20, 40, 0, player1Preview, seed);
+		player2Panel = new TetrisPanel(520, 0, 10, 20, 40, 0, player2Preview, seed);
 
 		player1Panel.addPiece();
 		player2Panel.addPiece();
