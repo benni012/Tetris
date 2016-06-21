@@ -19,4 +19,7 @@ run:
 run_multi: 
 	java -cp "$(CLASSES):$(LIB)/*" Multi$(NAME)
 
+run_coop: 
+	java -cp "$(CLASSES):$(LIB)/*" Coop$(NAME)
+
 .PHONY: all clean $(NAME) run

@@ -1,5 +1,5 @@
 // TODO 1VS1 Multiplayer, full line gets moved over?
-// TODO COOP Multiplayer, Only clear line when line on other side is full too, implementation? Swap pieces of two players	
+// TODO COOP Multiplayer, Only clear line when line on other side is full too, implementation? Swap pieces of two players
 // TODO Tournament Mode
 // TODO Add Menu
 // TODO (Online) scoreboard
@@ -126,11 +126,11 @@ class TetrisPanel extends PieceView{
 		}
 	}
 
-	private void setMS(int level) {
+	protected void setMS(int level) {
 		this.ms = (int) Math.floor(1000*Math.pow(0.9, level));
 	}
 
-	private void setLevel(int score) {
+	protected void setLevel(int score) {
 		this.level = (int) score/5;
 	}
 
@@ -143,7 +143,7 @@ class TetrisPanel extends PieceView{
 			return;
 
 		delta = 0;
-		
+
 		// Was it moved or has it collided?
 		boolean moved = false;
 
@@ -218,7 +218,7 @@ class TetrisPanel extends PieceView{
 		addPiece();
 	}
 
-	private void checkForFullRow() {
+	protected void checkForFullRow() {
 		for (int arY = 0; arY < tiles[0].length; arY++) {
 			boolean full = true;
 
@@ -235,12 +235,11 @@ class TetrisPanel extends PieceView{
 				setMS(level);
 			}
 		}
-
 	}
 
-	private void removeRow(int row) {
+	protected void removeRow(int row) {
 		// Remove a row by shifting everything up that row downward
-		
+
 		for (int y = row; y > 0; y--) {
 			for (int x = 0; x < tiles.length; x++) {
 				tiles[x][y] = new Tile(tiles[x][y-1]);
@@ -368,12 +367,12 @@ class TetrisPanel extends PieceView{
 	private void rotate(int centerX, int centerY) {
 		// Approach
 		// To rotate a tile, calculate the relative prosition to the center
-		// Now, 
+		// Now,
 		// x = -dy
 		// y =  dx
 		Tile[][] tmp = new Tile[countX][countY];
 		boolean success = true;
-		 
+
 		// Cycle through the array
 		cycle:
 		for (int arX = 0; arX < tiles.length; arX++) {
@@ -425,7 +424,7 @@ class TetrisPanel extends PieceView{
 			// Update Ghost
 			updateGhost();
 		}
-		
+
 	}
 
 	public void rotate() {
@@ -468,13 +467,9 @@ class TetrisPanel extends PieceView{
 		// X position
 		int tx = (int) countX/2-1;
 
-		// add piece
-		for (int arX = 0; arX < piece[0].length(); arX++)
-			for (int arY = 0; arY < piece.length; arY++)
-				if (tiles[arX+tx][arY].state != TileState.EMPTY) {
-					gameOver = true;
-				}
+		checkIfGameOver(piece, tx);
 
+		// add piece
 		stringToTiles(piece, state, tx);
 
 		// next random index, for preview
@@ -487,11 +482,20 @@ class TetrisPanel extends PieceView{
 		state = TileState.values()[pieceIndex+1];
 		// and update the preview
 		updatePreview(piece, state);
-		
+
 		// Update Ghost
 		updateGhost();
 
 	}
+
+	protected void checkIfGameOver(String[] piece, int tx)
+	{
+		for (int arX = 0; arX < piece[0].length(); arX++)
+			for (int arY = 0; arY < piece.length; arY++)
+				if (tiles[arX+tx][arY].state != TileState.EMPTY)
+					gameOver = true;
+	}
+
 
 	private void updatePreview(String[] piece, TileState state) {
 		if (preview != null) {
@@ -501,7 +505,7 @@ class TetrisPanel extends PieceView{
 	}
 
 	public void stringToTiles(String[] piece, TileState state, int tx) {
-		// Start at the topmost possible position 
+		// Start at the topmost possible position
 		for (int y = piece.length - 1; y >= 0; y--) {
 			for (int x = 0; x < piece[0].length(); x++) {
 				switch(piece[y].charAt(x)) {
