@@ -32,6 +32,9 @@ public class CoopPanel extends TetrisPanel
 				if (full) {
 					removeRow(arY);
 					partner.removeRow(arY);
+					
+					score++;
+					partner.score++;
 
 					setLevel(score);
 					partner.setLevel(score);

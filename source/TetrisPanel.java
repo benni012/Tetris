@@ -206,14 +206,11 @@ class TetrisPanel extends PieceView{
 		if (gameOver)
 			return;
 
-		checkForFullRow();
-		for (int arX = 0; arX < tiles.length; arX++) {
-			for (int arY = 0; arY < tiles[0].length; arY++) {
-				if (tiles[arX][arY].active) {
+		for (int arX = 0; arX < tiles.length; arX++)
+			for (int arY = 0; arY < tiles[0].length; arY++)
+				if (tiles[arX][arY].active)
 					tiles[arX][arY].active = false;
-				}
-			}
-		}
+		checkForFullRow();
 
 		addPiece();
 	}
@@ -239,12 +236,10 @@ class TetrisPanel extends PieceView{
 
 	protected void removeRow(int row) {
 		// Remove a row by shifting everything up that row downward
-
-		for (int y = row; y > 0; y--) {
-			for (int x = 0; x < tiles.length; x++) {
-				tiles[x][y] = new Tile(tiles[x][y-1]);
-			}
-		}
+		for (int y = row; y > 0; y--)
+			for (int x = 0; x < tiles.length; x++)
+				if (!tiles[x][y-1].active && !tiles[x][y].active)
+					tiles[x][y] = new Tile(tiles[x][y-1]);
 	}
 
 	public void render(GameContainer container, Graphics g) throws SlickException{
