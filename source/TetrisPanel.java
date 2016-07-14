@@ -10,7 +10,8 @@ import java.io.File;
 import java.util.Random;
 
 // Enum to represent the state of a tile
-enum TileState {
+enum TileState
+{
 	EMPTY,
 	MAGENTA,
 	YELLOW,
@@ -21,7 +22,8 @@ enum TileState {
 	LIME
 }
 
-class TetrisPanel extends PieceView{
+class TetrisPanel extends PieceView
+{
 	// The possible pieces, sorted by color
 	// # -> Tile
 	// X -> Center
@@ -67,7 +69,7 @@ class TetrisPanel extends PieceView{
 
 	Random r;
 
-	int pieceIndex = 0;
+	int nextPiece = 0;
 
 	int ms;
 	int delta;
@@ -83,6 +85,8 @@ class TetrisPanel extends PieceView{
 
 	PieceView preview;
 
+	int lastLineClearCount = 0;
+
 
 	/**
 	 * Represents a panel of Tetris tiles
@@ -94,17 +98,19 @@ class TetrisPanel extends PieceView{
 	 * @param  level    Level
 	 * @return          TetrisPanel
 	 */
-	public TetrisPanel(int x, int y, int countX, int countY, int tileSize, int level) {
+	public TetrisPanel(int x, int y, int countX, int countY, int tileSize, int level)
+	{
 		super(x, y, countX, countY, tileSize);
 
 		this.level = level;
 		setMS(level);
 
 		this.r = new Random();
-		pieceIndex = r.nextInt(7);
+		nextPiece = r.nextInt(7);
 	}
 
-	public TetrisPanel(int x, int y, int countX, int countY, int tileSize, int level, PieceView preview, long seed) {
+	public TetrisPanel(int x, int y, int countX, int countY, int tileSize, int level, PieceView preview, long seed)
+	{
 		this(x, y, countX, countY, tileSize, level);
 
 		this.preview = preview;
@@ -112,25 +118,27 @@ class TetrisPanel extends PieceView{
 			this.r = new Random(seed);
 		else
 			this.r = new Random();
-		pieceIndex = r.nextInt(7);
+		nextPiece = r.nextInt(7);
 	}
 
-	public void update(GameContainer container, int delta) throws SlickException{
+	public void update(GameContainer container, int delta) throws SlickException
+	{
 		if (ms > 0 && !paused && !gameOver) {
 			this.delta+=delta;
 
 			// If one second passed since last tick, next tick
-			if (this.delta / ms >= 1) {
+			if (this.delta / ms >= 1)
 				tick(1);
-			}
 		}
 	}
 
-	protected void setMS(int level) {
-		this.ms = (int) Math.floor(1000*Math.pow(0.9, level));
+	protected void setMS(int level)
+	{
+		this.ms = (int) Math.floor(1000*Math.pow(0.85, level)+125);
 	}
 
-	protected void setLevel(int score) {
+	protected void setLevel(int score)
+	{
 		this.level = (int) score/5;
 	}
 
@@ -138,7 +146,8 @@ class TetrisPanel extends PieceView{
 	 * Method to update the gravity
 	 * @param ticks How many times to tick
 	 */
-	public void tick(int ticks) {
+	public void tick(int ticks)
+	{
 		if (gameOver)
 			return;
 
@@ -150,9 +159,8 @@ class TetrisPanel extends PieceView{
 		Tile[][] tmp = new Tile[countX][countY];
 
 		// Tick until the tile is on the floor
-		if (ticks == 0) {
+		if (ticks == 0)
 			ticks = countY;
-		}
 
 		// TODO More efficient solution
 		// Every active tile gets moved down by 1
@@ -202,7 +210,8 @@ class TetrisPanel extends PieceView{
 		}
 	}
 
-	private void disableAllActive() {
+	private void disableAllActive()
+	{
 		if (gameOver)
 			return;
 
@@ -215,26 +224,32 @@ class TetrisPanel extends PieceView{
 		addPiece();
 	}
 
-	protected void checkForFullRow() {
+	protected void checkForFullRow()
+	{
+		int fullLines = 0;
 		for (int arY = 0; arY < tiles[0].length; arY++) {
 			boolean full = true;
 
 			for (int arX = 0; arX < tiles.length; arX++) {
-				if(tiles[arX][arY].state == TileState.EMPTY) {
+				if(tiles[arX][arY].state == TileState.EMPTY)
 					full = false;
-				}
 			}
 
 			if (full) {
+				fullLines++;
 				removeRow(arY);
-				score++;
-				setLevel(score);
-				setMS(level);
 			}
 		}
+
+		if (lastLineClearCount == 4 && fullLines == 4)
+			score += 2;
+		score+=Math.pow(2, fullLines-1);
+		setLevel(score);
+		setMS(level);
 	}
 
-	protected void removeRow(int row) {
+	protected void removeRow(int row)
+	{
 		// Remove a row by shifting everything up that row downward
 		for (int y = row; y > 0; y--)
 			for (int x = 0; x < tiles.length; x++)
@@ -254,20 +269,24 @@ class TetrisPanel extends PieceView{
 		// Draw the ghost
 		g.fillRect(x + (ghostStart*tileSize), y + (countY * tileSize)+5, (ghostEnd-ghostStart+1)*tileSize, 5);
 
+		// ghost lines
+		g.setColor(new Color(0x30FFFFFF));
+		g.drawLine(x + (ghostStart*tileSize)-1, y, x + (ghostStart*tileSize), y + (countY * tileSize)+5);
+		g.drawLine(x + ((ghostEnd+1)*tileSize), y, x + ((ghostEnd+1)*tileSize), y + (countY * tileSize)+5);
+
 		// Draw the score
 		g.setColor(Color.white);
 		g.drawString("Score: "+score, x + tileSize/2, y + tileSize/2);
 		g.drawString("Level: "+level, x + tileSize/2, y + tileSize/2+23);
 
-		if (gameOver) {
+		if (gameOver)
 			g.drawString("GAME OVER!", x+tileSize*2, y+tileSize*2);
-		}
 	}
 
-	public void left() {
-		if (gameOver || paused) {
+	public void left()
+	{
+		if (gameOver || paused)
 			return;
-		}
 
 		Tile[][] tmp = new Tile[countX][countY];
 		boolean success = true;
@@ -302,10 +321,10 @@ class TetrisPanel extends PieceView{
 		}
 	}
 
-	public void right() {
-		if (gameOver || paused) {
+	public void right()
+	{
+		if (gameOver || paused)
 			return;
-		}
 
 		Tile[][] tmp = new Tile[countX][countY];
 		boolean success = true;
@@ -341,7 +360,8 @@ class TetrisPanel extends PieceView{
 		}
 	}
 
-	private void updateGhost() {
+	private void updateGhost()
+	{
 		boolean first = true;
 
 		for (int arX = 0; arX < tiles.length; arX++) {
@@ -359,7 +379,8 @@ class TetrisPanel extends PieceView{
 		}
 	}
 
-	private void rotate(int centerX, int centerY) {
+	private void rotate(int centerX, int centerY)
+	{
 		// Approach
 		// To rotate a tile, calculate the relative prosition to the center
 		// Now,
@@ -408,9 +429,8 @@ class TetrisPanel extends PieceView{
 			// Fill the array up with empty tiles
 			for (int arX = 0; arX < tiles.length; arX++) {
 				for (int arY = 0; arY < tiles[0].length; arY++) {
-					if (tmp[arX][arY] == null) {
+					if (tmp[arX][arY] == null)
 						tmp[arX][arY] = new Tile(TileState.EMPTY, false);
-					}
 				}
 			}
 			// Join the two Tile arrays
@@ -422,10 +442,10 @@ class TetrisPanel extends PieceView{
 
 	}
 
-	public void rotate() {
-		if (gameOver || paused) {
+	public void rotate()
+	{
+		if (gameOver || paused)
 			return;
-		}
 
 		rotate(rotX, rotY);
 	}
@@ -436,28 +456,28 @@ class TetrisPanel extends PieceView{
 	 * @param  to   The destination array
 	 * @return      The joined array
 	 */
-	private Tile[][] join(Tile[][] from, Tile[][] to) {
-		if (from.length != to.length) {
+	private Tile[][] join(Tile[][] from, Tile[][] to)
+	{
+		if (from.length != to.length)
 			System.out.println("Error @ join(): Length not equal");
-		}
 
 		// Join both arrays
 		for (int arX = 0; arX < from.length; arX++) {
 			for (int arY = 0; arY < from[0].length; arY++) {
 				if (from[arX][arY] != null) {
-					if (to[arX][arY].state == TileState.EMPTY || to[arX][arY].active) {
+					if (to[arX][arY].state == TileState.EMPTY || to[arX][arY].active)
 						to[arX][arY] = new Tile(from[arX][arY]);
-					}
 				}
 			}
 		}
 		return to;
 	}
 
-	public void addPiece() {
+	public void addPiece()
+	{
 		// Current idx
-		TileState state = TileState.values()[pieceIndex+1];
-		String[] piece = pieces[pieceIndex];
+		TileState state = TileState.values()[nextPiece+1];
+		String[] piece = pieces[nextPiece];
 
 		// X position
 		int tx = (int) countX/2-1;
@@ -468,13 +488,13 @@ class TetrisPanel extends PieceView{
 		stringToTiles(piece, state, tx);
 
 		// next random index, for preview
-		pieceIndex = r.nextInt(7);
+		nextPiece = r.nextInt(7);
 
 		// Get the piece
-		piece = pieces[pieceIndex];
+		piece = pieces[nextPiece];
 
 		// Get the corresponding color
-		state = TileState.values()[pieceIndex+1];
+		state = TileState.values()[nextPiece+1];
 		// and update the preview
 		updatePreview(piece, state);
 
@@ -492,14 +512,16 @@ class TetrisPanel extends PieceView{
 	}
 
 
-	private void updatePreview(String[] piece, TileState state) {
+	private void updatePreview(String[] piece, TileState state)
+	{
 		if (preview != null) {
 			preview.clear();
 			preview.stringToTiles(piece, state, 0);
 		}
 	}
 
-	public void stringToTiles(String[] piece, TileState state, int tx) {
+	public void stringToTiles(String[] piece, TileState state, int tx)
+	{
 		// Start at the topmost possible position
 		for (int y = piece.length - 1; y >= 0; y--) {
 			for (int x = 0; x < piece[0].length(); x++) {
@@ -517,20 +539,20 @@ class TetrisPanel extends PieceView{
 		}
 	}
 
-	private boolean checkForActiveTile() {
+	private boolean checkForActiveTile()
+	{
 		boolean activeTile = false;
 
-		for (int arX = 0; arX < tiles.length; arX++) {
-			for (int arY = 0; arY < tiles[0].length; arY++) {
-				if (tiles[arX][arY].active) {
+		for (int arX = 0; arX < tiles.length; arX++)
+			for (int arY = 0; arY < tiles[0].length; arY++)
+				if (tiles[arX][arY].active)
 					activeTile = true;
-				}
-			}
-		}
+
 		return activeTile;
 	}
 
-	public void pause() {
+	public void pause()
+	{
 		paused = !paused;
 	}
 }

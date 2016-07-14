@@ -2,11 +2,13 @@ public class CoopPanel extends TetrisPanel
 {
 	CoopPanel partner;
 
-	public CoopPanel(int x, int y, int countX, int countY, int tileSize, int level) {
+	public CoopPanel(int x, int y, int countX, int countY, int tileSize, int level)
+	{
 		super(x, y, countX, countY, tileSize, level);
 	}
 
-	public CoopPanel(int x, int y, int countX, int countY, int tileSize, int level, PieceView preview, long seed) {
+	public CoopPanel(int x, int y, int countX, int countY, int tileSize, int level, PieceView preview, long seed)
+	{
 		super(x, y, countX, countY, tileSize, level, preview, seed);
 	}
 
@@ -32,7 +34,7 @@ public class CoopPanel extends TetrisPanel
 				if (full) {
 					removeRow(arY);
 					partner.removeRow(arY);
-					
+
 					score++;
 					partner.score++;
 
