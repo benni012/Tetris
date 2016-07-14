@@ -63,6 +63,7 @@ public class Tetris extends BasicGame
 			case 57: mainPanel.tick(0); break;
 			case 25: mainPanel.pause(); break;
 			case 19: restart(); break;
+			case 34: mainPanel.ghostLines = !mainPanel.ghostLines; break;
 		}
 	}
 

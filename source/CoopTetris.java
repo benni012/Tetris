@@ -71,6 +71,8 @@ public class CoopTetris extends BasicGame
 			case 31: player1Panel.tick(1); break;
 			case 25: player1Panel.pause(); player2Panel.pause(); break;
 			case 19: restart(); break;
+			case 34: player1Panel.ghostLines = !player1Panel.ghostLines; break;
+			case 35: player2Panel.ghostLines = !player2Panel.ghostLines; break;
 		}
 	}
 

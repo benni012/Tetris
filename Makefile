@@ -11,6 +11,7 @@ clean:
 	rm -rf $(CLASSES)/*
 
 $(NAME):
+	test -d "$(CLASSES)" || mkdir "$(CLASSES)" && \
 	javac -cp "$(LIB)/*" -d "$(CLASSES)" $(SRC)/*.java
 
 run: 

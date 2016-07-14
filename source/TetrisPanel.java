@@ -81,6 +81,8 @@ class TetrisPanel extends PieceView
 
 	int ghostStart, ghostEnd;
 
+	boolean ghostLines = false;
+
 	boolean gameOver = false;
 
 	PieceView preview;
@@ -270,9 +272,11 @@ class TetrisPanel extends PieceView
 		g.fillRect(x + (ghostStart*tileSize), y + (countY * tileSize)+5, (ghostEnd-ghostStart+1)*tileSize, 5);
 
 		// ghost lines
-		g.setColor(new Color(0x30FFFFFF));
-		g.drawLine(x + (ghostStart*tileSize)-1, y, x + (ghostStart*tileSize), y + (countY * tileSize)+5);
-		g.drawLine(x + ((ghostEnd+1)*tileSize), y, x + ((ghostEnd+1)*tileSize), y + (countY * tileSize)+5);
+		if (ghostLines) {
+			g.setColor(new Color(0x20FFFFFF));
+			g.drawLine(x + (ghostStart*tileSize)-1, y, x + (ghostStart*tileSize), y + (countY * tileSize)+5);
+			g.drawLine(x + ((ghostEnd+1)*tileSize), y, x + ((ghostEnd+1)*tileSize), y + (countY * tileSize)+5);
+		}
 
 		// Draw the score
 		g.setColor(Color.white);
