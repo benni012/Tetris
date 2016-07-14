@@ -58,21 +58,22 @@ public class CoopTetris extends BasicGame
 	public void keyPressed(int key, char c)
 	{
 		switch(key) {
-			case 200: player2Panel.rotate(); break;
-			case 203: player2Panel.left(); break;
-			case 205: player2Panel.right(); break;
-			case 208: player2Panel.tick(1); break;
-			case 157: player2Panel.tick(0); break;
-			case 29: player1Panel.tick(0); break;
+			case Input.KEY_UP: player2Panel.rotate(); break;
+			case Input.KEY_LEFT: player2Panel.left(); break;
+			case Input.KEY_RIGHT: player2Panel.right(); break;
+			case Input.KEY_DOWN: player2Panel.tick(1); break;
+			case Input.KEY_RCONTROL: player2Panel.tick(0); break;
+			case Input.KEY_LCONTROL: player1Panel.tick(0); break;
 
-			case 17: player1Panel.rotate(); break;
-			case 30: player1Panel.left(); break;
-			case 32: player1Panel.right(); break;
-			case 31: player1Panel.tick(1); break;
-			case 25: player1Panel.pause(); player2Panel.pause(); break;
-			case 19: restart(); break;
-			case 34: player1Panel.ghostLines = !player1Panel.ghostLines; break;
-			case 35: player2Panel.ghostLines = !player2Panel.ghostLines; break;
+			case Input.KEY_W: player1Panel.rotate(); break;
+			case Input.KEY_A: player1Panel.left(); break;
+			case Input.KEY_D: player1Panel.right(); break;
+			case Input.KEY_S: player1Panel.tick(1); break;
+			case Input.KEY_R: restart(); break;
+			case Input.KEY_G: player1Panel.ghostLines = !player1Panel.ghostLines; break;
+			case Input.KEY_H: player2Panel.ghostLines = !player2Panel.ghostLines; break;
+			case Input.KEY_P:
+			case Input.KEY_ESCAPE: player1Panel.pause(); player2Panel.pause(); break;
 		}
 	}
 

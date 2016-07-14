@@ -285,6 +285,8 @@ class TetrisPanel extends PieceView
 
 		if (gameOver)
 			g.drawString("GAME OVER!", x+tileSize*2, y+tileSize*2);
+		if (paused)
+			g.drawString("PAUSED", x+tileSize*2, y+tileSize*2+20);
 	}
 
 	public void left()
