@@ -245,7 +245,10 @@ class TetrisPanel extends PieceView
 
 		if (lastLineClearCount == 4 && fullLines == 4)
 			score += 2;
-		lastLineClearCount = fullLines;
+
+		if (fullLines > 0)
+			lastLineClearCount = fullLines;
+
 		score+=Math.pow(2, fullLines-1);
 		setLevel(score);
 		setMS(level);
