@@ -258,6 +258,12 @@ class TetrisPanel extends PieceView
 			for (int x = 0; x < tiles.length; x++)
 				if (!tiles[x][y-1].active && !tiles[x][y].active)
 					tiles[x][y] = new Tile(tiles[x][y-1]);
+
+
+		// clear top row
+		for (int x = 0; x < tiles.length; x++)
+			if (!tiles[x][0].active && !tiles[x][0].active)
+				tiles[x][0] = new Tile(TileState.EMPTY, false);
 	}
 
 	public void render(GameContainer container, Graphics g) throws SlickException{

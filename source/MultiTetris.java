@@ -69,10 +69,11 @@ public class MultiTetris extends BasicGame
 			case Input.KEY_A: player1Panel.left(); break;
 			case Input.KEY_D: player1Panel.right(); break;
 			case Input.KEY_S: player1Panel.tick(1); break;
-			case Input.KEY_P: player1Panel.pause(); player2Panel.pause(); break;
 			case Input.KEY_R: restart(); break;
 			case Input.KEY_G: player1Panel.ghostLines = !player1Panel.ghostLines; break;
 			case Input.KEY_H: player2Panel.ghostLines = !player2Panel.ghostLines; break;
+			case Input.KEY_ESCAPE:
+			case Input.KEY_P: player1Panel.pause(); player2Panel.pause(); break;
 		}
 	}
 
