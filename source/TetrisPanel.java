@@ -88,6 +88,9 @@ class TetrisPanel extends PieceView
 	PieceView preview;
 
 	int lastLineClearCount = 0;
+	// time left to move
+	private final int MOVETIME = 500;
+	int waitTicks = -1;
 
 
 	/**
@@ -136,7 +139,7 @@ class TetrisPanel extends PieceView
 
 	protected void setMS(int level)
 	{
-		this.ms = (int) Math.floor(1000*Math.pow(0.85, level)+125);
+		this.ms = calcMS(level);
 	}
 
 	protected void setLevel(int score)
@@ -150,7 +153,7 @@ class TetrisPanel extends PieceView
 	 */
 	public void tick(int ticks)
 	{
-		if (gameOver)
+		if (gameOver || paused)
 			return;
 
 		delta = 0;
@@ -163,6 +166,10 @@ class TetrisPanel extends PieceView
 		// Tick until the tile is on the floor
 		if (ticks == 0)
 			ticks = countY;
+
+		if (waitTicks > 0)
+			waitTicks--;
+		// System.out.println(waitTicks + ", " + ms + "ms");
 
 		// TODO More efficient solution
 		// Every active tile gets moved down by 1
@@ -178,7 +185,12 @@ class TetrisPanel extends PieceView
 						// When colliding with the floor
 						if (y == tiles[0].length-1) {
 							//System.out.println("Floor collided");
-							disableAllActive();
+							if (waitTicks == -1)
+								waitTicks = (int) Math.ceil(((float)MOVETIME)/ms)-1;
+							if (ticks > 1 || waitTicks == 0) {
+								disableAllActive();
+								waitTicks = -1;
+							}
 							moved = false;
 							break tick;
 						}
@@ -191,7 +203,12 @@ class TetrisPanel extends PieceView
 						} else {
 							//System.out.println("Form collided");
 							// When its neither empty nor active, disable every active tile
-							disableAllActive();
+							if (waitTicks == -1)
+								waitTicks = (int) Math.ceil(((float)MOVETIME)/ms)-1;
+							if (ticks > 1 || waitTicks == 0) {
+								disableAllActive();
+								waitTicks = -1;
+							}
 							moved = false;
 							break tick;
 						}
@@ -208,9 +225,16 @@ class TetrisPanel extends PieceView
 
 				// Update the ghost
 				updateGhost();
+				waitTicks = -1;
 			}
 		}
 	}
+
+	private int calcMS(int level)
+	{
+		return (int) Math.floor(1000*Math.pow(0.85, level+1)+125);
+	}
+
 
 	private void disableAllActive()
 	{
