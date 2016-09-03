@@ -547,7 +547,7 @@ class TetrisPanel extends PieceView
 	{
 		for (int arX = 0; arX < piece[0].length(); arX++)
 			for (int arY = 0; arY < piece.length; arY++)
-				if (tiles[arX+tx][arY].state != TileState.EMPTY)
+				if (tiles[arX+tx][arY].state != TileState.EMPTY && !tiles[arX+tx][arY].active)
 					gameOver = true;
 	}
 
