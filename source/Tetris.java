@@ -36,8 +36,10 @@ public class Tetris extends BasicGame
 	@Override
 	public void render(GameContainer container, Graphics g) throws SlickException
 	{
-		g.drawRect(0, 0, 400, 800);
-		g.drawRect(400, 0, 120, 800);
+		g.setColor(new Color(0x20FFFFFF));
+		g.drawRect(20, 0, 400, 800);
+		for (int i = 0; i < 3; i++)
+			g.drawRect(420, i*(4*40+20), 120, 4*40+20);
 		mainPanel.render(container, g);
 	}
 
@@ -67,8 +69,8 @@ public class Tetris extends BasicGame
 	{
 		ArrayList<PieceView> previews = new ArrayList<>();
 		for (int i = 0; i < 3; i++)
-			previews.add(new PieceView(420, 20+i*(4*40+10), 3, 4, 40));
-		mainPanel = new TetrisPanel(0, 0, 10, 20, 40, 0, previews, 0);
+			previews.add(new PieceView(440, 10+i*(4*40+20), 3, 4, 40));
+		mainPanel = new TetrisPanel(20, 0, 10, 20, 40, 0, previews, 0);
 
 		mainPanel.addPiece();
 	}

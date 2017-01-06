@@ -24,7 +24,7 @@ public class CoopTetris extends BasicGame
 		System.setProperty("org.lwjgl.librarypath", new File("natives").getAbsolutePath());
 		try {
 			AppGameContainer app = new AppGameContainer(new CoopTetris());
-			app.setDisplayMode(1040, 850, false);
+			app.setDisplayMode(1080, 850, false);
 			app.start();
 		} catch(SlickException e) {
 			e.printStackTrace();
@@ -45,8 +45,12 @@ public class CoopTetris extends BasicGame
 		player2Panel.render(container, g);
 
 		g.setColor(Color.white);
-		g.drawRect(120, 0, 400, 800);
-		g.drawRect(520, 0, 400, 800);
+		for (int i = 0; i < 3; i++) {
+			g.drawRect(20, i*(4*40+20), 120, 4*40+20);
+			g.drawRect(940, i*(4*40+20), 120, 4*40+20);
+		}
+		g.drawRect(140, 0, 400, 800);
+		g.drawRect(540, 0, 400, 800);
 	}
 
 	@Override
@@ -84,12 +88,12 @@ public class CoopTetris extends BasicGame
 		ArrayList<PieceView> player2Previews = new ArrayList<>();
 
 		for (int i = 0; i < 3; i++) {
-			player1Previews.add(new PieceView(20, 20+i*(4*40+10), 3, 4, 40));
-			player2Previews.add(new PieceView(940, 20+i*(4*40+10), 3, 4, 40));
+			player1Previews.add(new PieceView(40, 10+i*(4*40+20), 3, 4, 40));
+			player2Previews.add(new PieceView(960, 10+i*(4*40+20), 3, 4, 40));
 		}
 
-		player1Panel = new CoopPanel(120, 0, 10, 20, 40, 0, player1Previews, 0);
-		player2Panel = new CoopPanel(520, 0, 10, 20, 40, 0, player2Previews, 0);
+		player1Panel = new CoopPanel(140, 0, 10, 20, 40, 0, player1Previews, 0);
+		player2Panel = new CoopPanel(540, 0, 10, 20, 40, 0, player2Previews, 0);
 
 		player1Panel.setPartner(player2Panel);
 		player2Panel.setPartner(player1Panel);

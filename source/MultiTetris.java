@@ -24,7 +24,7 @@ public class MultiTetris extends BasicGame
 		System.setProperty("org.lwjgl.librarypath", new File("natives").getAbsolutePath());
 		try {
 			AppGameContainer app = new AppGameContainer(new MultiTetris());
-			app.setDisplayMode(1040, 850, false);
+			app.setDisplayMode(1080, 850, false);
 			app.start();
 		} catch(SlickException e) {
 			e.printStackTrace();
@@ -44,9 +44,13 @@ public class MultiTetris extends BasicGame
 		player1Panel.render(container, g);
 		player2Panel.render(container, g);
 
-		g.setColor(Color.white);
-		g.drawRect(120, 0, 400, 800);
-		g.drawRect(520, 0, 400, 800);
+		g.setColor(new Color(0x20FFFFFF));
+		for (int i = 0; i < 3; i++) {
+			g.drawRect(20, i*(4*40+20), 120, 4*40+20);
+			g.drawRect(940, i*(4*40+20), 120, 4*40+20);
+		}
+		g.drawRect(140, 0, 400, 800);
+		g.drawRect(540, 0, 400, 800);
 	}
 
 	@Override
@@ -84,13 +88,13 @@ public class MultiTetris extends BasicGame
 		ArrayList<PieceView> player2Previews = new ArrayList<>();
 
 		for (int i = 0; i < 3; i++) {
-			player1Previews.add(new PieceView(20, 20+i*(4*40+10), 3, 4, 40));
-			player2Previews.add(new PieceView(940, 20+i*(4*40+10), 3, 4, 40));
+			player1Previews.add(new PieceView(40, 10+i*(4*40+20), 3, 4, 40));
+			player2Previews.add(new PieceView(960, 10+i*(4*40+20), 3, 4, 40));
 		}
 
 		long seed = System.currentTimeMillis();
-		player1Panel = new TetrisPanel(120, 0, 10, 20, 40, 0, player1Previews, seed);
-		player2Panel = new TetrisPanel(520, 0, 10, 20, 40, 0, player2Previews, seed);
+		player1Panel = new TetrisPanel(140, 0, 10, 20, 40, 0, player1Previews, seed);
+		player2Panel = new TetrisPanel(540, 0, 10, 20, 40, 0, player2Previews, seed);
 
 		player1Panel.addPiece();
 		player2Panel.addPiece();
