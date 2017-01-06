@@ -28,7 +28,7 @@ class TetrisPanel extends PieceView
 	// # -> Tile
 	// X -> Center
 	// . -> Empty, can be any char
-	final String[][] pieces = {{ "#",
+	static final String[][] pieces = {{ "#",
 								 "X",
 								 "#",
 								 "#"
@@ -91,6 +91,8 @@ class TetrisPanel extends PieceView
 	// time left to move
 	private final int MOVETIME = 500;
 	int waitTicks = -1;
+
+	int[] hist = new int[pieces.length];
 
 
 	/**
@@ -526,6 +528,7 @@ class TetrisPanel extends PieceView
 
 		// add piece
 		stringToTiles(piece, state, tx);
+		hist[nextPiece]++;
 
 		// next random index, for preview
 		nextPiece = r.nextInt(7);

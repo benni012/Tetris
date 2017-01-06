@@ -56,7 +56,7 @@ public class Tetris extends BasicGame
 			case Input.KEY_DOWN: mainPanel.tick(1); break;
 			case Input.KEY_SPACE:
 			case Input.KEY_RCONTROL: mainPanel.tick(0); break;
-			case Input.KEY_R: restart(); break;
+			case Input.KEY_R: hist(); restart(); break;
 			case Input.KEY_G: mainPanel.ghostLines = !mainPanel.ghostLines; break;
 			case Input.KEY_P:
 			case Input.KEY_ESCAPE: mainPanel.pause(); break;
@@ -69,5 +69,19 @@ public class Tetris extends BasicGame
 		mainPanel = new TetrisPanel(0, 0, 10, 20, 40, 0, preview, 0);
 
 		mainPanel.addPiece();
+	}
+
+	private void hist()
+	{
+		System.out.print("====================HISTORY====================");
+		int sum = 0;
+		for (int i = 0; i < mainPanel.hist.length; i++) {
+			for (int j = 0; j < TetrisPanel.pieces[i].length; j++)
+				System.out.print("\n" + TetrisPanel.pieces[i][j].replaceAll("#", "\u2588").replaceAll("X", "\u2588").replaceAll("\\.", " ") + "\t| ");
+			System.out.println(mainPanel.hist[i]);
+			sum += mainPanel.hist[i];
+		}
+		System.out.println("sum = " + sum);
+		System.out.println("===============================================");
 	}
 }
