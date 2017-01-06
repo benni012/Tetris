@@ -8,6 +8,9 @@
 import org.newdawn.slick.*;
 import java.io.File;
 import java.util.Random;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.ListIterator;
 
 // Enum to represent the state of a tile
 enum TileState
@@ -78,14 +81,11 @@ class TetrisPanel extends PieceView
 
 	int rotX, rotY;
 
-
 	int ghostStart, ghostEnd;
 
 	boolean ghostLines = false;
 
 	boolean gameOver = false;
-
-	PieceView preview;
 
 	int lastLineClearCount = 0;
 	// time left to move
@@ -94,6 +94,8 @@ class TetrisPanel extends PieceView
 
 	int[] hist = new int[pieces.length];
 
+	ArrayList<PieceView> previews = null;
+	LinkedList<Integer> pieceQueue = new LinkedList<>();
 
 	/**
 	 * Represents a panel of Tetris tiles
@@ -105,27 +107,38 @@ class TetrisPanel extends PieceView
 	 * @param  level    Level
 	 * @return          TetrisPanel
 	 */
-	public TetrisPanel(int x, int y, int countX, int countY, int tileSize, int level)
+	public TetrisPanel(int x, int y, int countX, int countY, int tileSize, int level, long seed)
 	{
 		super(x, y, countX, countY, tileSize);
 
 		this.level = level;
 		setMS(level);
 
-		this.r = new Random();
-		nextPiece = r.nextInt(7);
-	}
-
-	public TetrisPanel(int x, int y, int countX, int countY, int tileSize, int level, PieceView preview, long seed)
-	{
-		this(x, y, countX, countY, tileSize, level);
-
-		this.preview = preview;
 		if (seed != 0)
 			this.r = new Random(seed);
 		else
 			this.r = new Random();
-		nextPiece = r.nextInt(7);
+
+		refillQueue();
+	}
+
+	public TetrisPanel(int x, int y, int countX, int countY, int tileSize, int level, PieceView preview, long seed)
+	{
+		this(x, y, countX, countY, tileSize, level, seed);
+
+		this.previews = new ArrayList<PieceView>();
+		this.previews.add(preview);
+
+		refillQueue();
+	}
+
+	public TetrisPanel(int x, int y, int countX, int countY, int tileSize, int level, ArrayList<PieceView> previews, long seed)
+	{
+		this(x, y, countX, countY, tileSize, level, seed);
+
+		this.previews = previews;
+
+		refillQueue();
 	}
 
 	public void update(GameContainer container, int delta) throws SlickException
@@ -296,10 +309,8 @@ class TetrisPanel extends PieceView
 	}
 
 	public void render(GameContainer container, Graphics g) throws SlickException{
-		if (preview != null) {
-			// Render the preview
+		for (PieceView preview : previews)
 			preview.render(container, g);
-		}
 
 		super.render(container, g);
 
@@ -517,8 +528,12 @@ class TetrisPanel extends PieceView
 
 	public void addPiece()
 	{
+		// get the next element from the piece queue
+		int nextPiece = pieceQueue.poll();
+		refillQueue();
+
 		// Current idx
-		TileState state = TileState.values()[nextPiece+1];
+		TileState state = getStateForIndex(nextPiece);
 		String[] piece = pieces[nextPiece];
 
 		// X position
@@ -530,16 +545,7 @@ class TetrisPanel extends PieceView
 		stringToTiles(piece, state, tx);
 		hist[nextPiece]++;
 
-		// next random index, for preview
-		nextPiece = r.nextInt(7);
-
-		// Get the piece
-		piece = pieces[nextPiece];
-
-		// Get the corresponding color
-		state = TileState.values()[nextPiece+1];
-		// and update the preview
-		updatePreview(piece, state);
+		updatePreviews();
 
 		// Update Ghost
 		updateGhost();
@@ -555,11 +561,22 @@ class TetrisPanel extends PieceView
 	}
 
 
-	private void updatePreview(String[] piece, TileState state)
+	private void updatePreview(PieceView preview, String[] piece, TileState state)
 	{
-		if (preview != null) {
-			preview.clear();
-			preview.stringToTiles(piece, state, 0);
+		preview.clear();
+		preview.stringToTiles(piece, state, 0);
+	}
+
+	private void updatePreviews()
+	{
+		ListIterator<Integer> iter = pieceQueue.listIterator(0);
+
+		for (PieceView preview : previews) {
+			int nextPiece = iter.next();
+			TileState state = getStateForIndex(nextPiece);
+			String[] piece = pieces[nextPiece];
+
+			updatePreview(preview, piece, state);
 		}
 	}
 
@@ -597,5 +614,16 @@ class TetrisPanel extends PieceView
 	public void pause()
 	{
 		paused = !paused;
+	}
+
+	private void refillQueue()
+	{
+		while (pieceQueue.size() < 1 || (previews != null && pieceQueue.size() < previews.size()))
+			pieceQueue.offer(r.nextInt(pieces.length));
+	}
+
+	private static TileState getStateForIndex(int index)
+	{
+		return TileState.values()[index+1];
 	}
 }

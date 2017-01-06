@@ -1,6 +1,7 @@
 import org.newdawn.slick.*;
 import java.io.File;
 import java.util.Random;
+import java.util.ArrayList;
 
 public class CoopTetris extends BasicGame
 {
@@ -79,11 +80,16 @@ public class CoopTetris extends BasicGame
 
 	private void restart()
 	{
-		player1Preview = new PieceView(20, 20, 3, 4, 40);
-		player2Preview = new PieceView(940, 20, 3, 4, 40);
+		ArrayList<PieceView> player1Previews = new ArrayList<>();
+		ArrayList<PieceView> player2Previews = new ArrayList<>();
 
-		player1Panel = new CoopPanel(120, 0, 10, 20, 40, 0, player1Preview, 0);
-		player2Panel = new CoopPanel(520, 0, 10, 20, 40, 0, player2Preview, 0);
+		for (int i = 0; i < 3; i++) {
+			player1Previews.add(new PieceView(20, 20+i*(4*40+10), 3, 4, 40));
+			player2Previews.add(new PieceView(940, 20+i*(4*40+10), 3, 4, 40));
+		}
+
+		player1Panel = new CoopPanel(120, 0, 10, 20, 40, 0, player1Previews, 0);
+		player2Panel = new CoopPanel(520, 0, 10, 20, 40, 0, player2Previews, 0);
 
 		player1Panel.setPartner(player2Panel);
 		player2Panel.setPartner(player1Panel);

@@ -1,10 +1,17 @@
+import java.util.ArrayList;
+
 public class CoopPanel extends TetrisPanel
 {
 	CoopPanel partner;
 
-	public CoopPanel(int x, int y, int countX, int countY, int tileSize, int level)
+	public CoopPanel(int x, int y, int countX, int countY, int tileSize, int level, int seed)
 	{
-		super(x, y, countX, countY, tileSize, level);
+		super(x, y, countX, countY, tileSize, level, seed);
+	}
+
+	public CoopPanel(int x, int y, int countX, int countY, int tileSize, int level, ArrayList<PieceView> previews, long seed)
+	{
+		super(x, y, countX, countY, tileSize, level, previews, seed);
 	}
 
 	public CoopPanel(int x, int y, int countX, int countY, int tileSize, int level, PieceView preview, long seed)

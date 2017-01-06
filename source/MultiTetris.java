@@ -1,6 +1,7 @@
 import org.newdawn.slick.*;
 import java.io.File;
 import java.util.Random;
+import java.util.ArrayList;
 
 public class MultiTetris extends BasicGame
 {
@@ -79,12 +80,17 @@ public class MultiTetris extends BasicGame
 
 	private void restart()
 	{
-		long seed = System.currentTimeMillis();
-		player1Preview = new PieceView(20, 20, 3, 4, 40);
-		player2Preview = new PieceView(940, 20, 3, 4, 40);
+		ArrayList<PieceView> player1Previews = new ArrayList<>();
+		ArrayList<PieceView> player2Previews = new ArrayList<>();
 
-		player1Panel = new TetrisPanel(120, 0, 10, 20, 40, 0, player1Preview, seed);
-		player2Panel = new TetrisPanel(520, 0, 10, 20, 40, 0, player2Preview, seed);
+		for (int i = 0; i < 3; i++) {
+			player1Previews.add(new PieceView(20, 20+i*(4*40+10), 3, 4, 40));
+			player2Previews.add(new PieceView(940, 20+i*(4*40+10), 3, 4, 40));
+		}
+
+		long seed = System.currentTimeMillis();
+		player1Panel = new TetrisPanel(120, 0, 10, 20, 40, 0, player1Previews, seed);
+		player2Panel = new TetrisPanel(520, 0, 10, 20, 40, 0, player2Previews, seed);
 
 		player1Panel.addPiece();
 		player2Panel.addPiece();

@@ -1,10 +1,10 @@
 import org.newdawn.slick.*;
 import java.io.File;
+import java.util.ArrayList;
 
 public class Tetris extends BasicGame
 {
 	TetrisPanel mainPanel;
-	PieceView preview;
 
 	public Tetris()
 	{
@@ -37,7 +37,7 @@ public class Tetris extends BasicGame
 	public void render(GameContainer container, Graphics g) throws SlickException
 	{
 		g.drawRect(0, 0, 400, 800);
-		g.drawRect(400, 0, 120, 200);
+		g.drawRect(400, 0, 120, 800);
 		mainPanel.render(container, g);
 	}
 
@@ -65,8 +65,10 @@ public class Tetris extends BasicGame
 
 	private void restart()
 	{
-		preview = new PieceView(420, 20, 3, 4, 40);
-		mainPanel = new TetrisPanel(0, 0, 10, 20, 40, 0, preview, 0);
+		ArrayList<PieceView> previews = new ArrayList<>();
+		for (int i = 0; i < 3; i++)
+			previews.add(new PieceView(420, 20+i*(4*40+10), 3, 4, 40));
+		mainPanel = new TetrisPanel(0, 0, 10, 20, 40, 0, previews, 0);
 
 		mainPanel.addPiece();
 	}
