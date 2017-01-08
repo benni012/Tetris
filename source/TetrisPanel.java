@@ -1,5 +1,5 @@
 // TODO 1VS1 Multiplayer, full line gets moved over?
-// TODO COOP Multiplayer, Only clear line when line on other side is full too, implementation? Swap pieces of two players
+// TODO Swap pieces of two players in COOP?
 // TODO Tournament Mode
 // TODO Add Menu
 // TODO (Online) scoreboard
@@ -336,26 +336,41 @@ class TetrisPanel extends PieceView
 			g.drawString("PAUSED", x+tileSize*2, y+tileSize*2+20);
 	}
 
-	public void left()
+
+	private void move(int direction)
 	{
 		if (gameOver || paused)
 			return;
 
+		if (direction == 0)
+			return;
+
+		direction = (direction < 0) ? -1 : 1;
+
 		Tile[][] tmp = new Tile[countX][countY];
 		boolean success = true;
+
 		// Cycle through array and check if there is an active tile on the leftmost column
 		cycle:
-		for (int arX = 0; arX < tiles.length; arX++) {
+		for (int cX = 0; cX < tiles.length; cX++) {
+			int arX = 0;
+
+			if (direction < 0)
+				arX = cX;
+			else if (direction > 0)
+				arX = tiles.length - 1 - cX;
+
+
 			for (int arY = 0; arY < tiles[0].length; arY++) {
 				if (tiles[arX][arY].active) {
-					if (arX == 0 || tiles[arX-1][arY].state != TileState.EMPTY && tiles[arX-1][arY].active == false) {
+					if ((direction == -1 && arX == 0) || (direction == 1 && arX == tiles.length-1) || tiles[arX+direction][arY].state != TileState.EMPTY && tiles[arX+direction][arY].active == false) {
 						// If the first col contains an active tile or there is an inactive tile on the left, get out of the loops
 						success = false;
 						break cycle;
 					} else {
 						// Shift the tile
 						// We have to create a new tile, because a reference wouldn't work
-						tmp[arX-1][arY] = new Tile(tiles[arX][arY]);
+						tmp[arX+direction][arY] = new Tile(tiles[arX][arY]);
 						// And remove the tile
 						tmp[arX][arY] = new Tile(TileState.EMPTY, false);
 					}
@@ -365,7 +380,7 @@ class TetrisPanel extends PieceView
 
 		if (success) {
 			// Shift the rotation point
-			rotX--;
+			rotX+=direction;
 			// Make changes
 			tiles = join(tmp, tiles);
 
@@ -374,43 +389,14 @@ class TetrisPanel extends PieceView
 		}
 	}
 
+	public void left()
+	{
+		move(-1);
+	}
+
 	public void right()
 	{
-		if (gameOver || paused)
-			return;
-
-		Tile[][] tmp = new Tile[countX][countY];
-		boolean success = true;
-		// Cycle through array and check if there is an active tile on the rightmost column
-		// Exactly as left() but we start from the right
-		cycle:
-		for (int arX = tiles.length-1; arX >= 0; arX--) {
-			for (int arY = 0; arY < tiles[0].length; arY++) {
-				if (tiles[arX][arY].active) {
-					if (arX == tiles.length-1  || tiles[arX+1][arY].state != TileState.EMPTY && tiles[arX+1][arY].active == false) {
-						// If the last col contains an active tile or there is an inactive tile on the right, get out of the loops
-						success = false;
-						break cycle;
-					} else {
-						// Shift the tile
-						// We have to create a new tile, because a reference wouldn't work
-						tmp[arX+1][arY] = new Tile(tiles[arX][arY]);
-						// And remove the tile
-						tmp[arX][arY] = new Tile(TileState.EMPTY, false);
-					}
-				}
-			}
-		}
-
-		if (success) {
-			// Shift the rotation point
-			rotX++;
-			// Make changes
-			tiles = join(tmp, tiles);
-
-			// Update Ghost
-			updateGhost();
-		}
+		move(1);
 	}
 
 	private void updateGhost()

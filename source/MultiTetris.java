@@ -44,7 +44,7 @@ public class MultiTetris extends BasicGame
 		player1Panel.render(container, g);
 		player2Panel.render(container, g);
 
-		g.setColor(new Color(0x20FFFFFF));
+		g.setColor(Constants.interfaceColor);
 		for (int i = 0; i < 3; i++) {
 			g.drawRect(20, i*(4*40+20), 120, 4*40+20);
 			g.drawRect(940, i*(4*40+20), 120, 4*40+20);

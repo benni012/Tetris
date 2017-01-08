@@ -36,7 +36,7 @@ public class Tetris extends BasicGame
 	@Override
 	public void render(GameContainer container, Graphics g) throws SlickException
 	{
-		g.setColor(new Color(0x20FFFFFF));
+		g.setColor(Constants.interfaceColor);
 		g.drawRect(20, 0, 400, 800);
 		for (int i = 0; i < 3; i++)
 			g.drawRect(420, i*(4*40+20), 120, 4*40+20);
