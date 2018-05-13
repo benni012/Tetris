@@ -124,6 +124,9 @@ class PieceView
 
 		// Draw the rect
 		g.fillRect(x, y, tileSize, tileSize);
+
+		g.setColor(getColorForCode(colorCode).brighter(0.3f));
+		g.fillRect(x+tileSize/5, y+tileSize/5, 3*tileSize/5, 3*tileSize/5);
 	}
 
 }
