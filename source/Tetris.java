@@ -16,6 +16,7 @@ public class Tetris extends BasicGame
 		// Init of Slick
 
 		System.setProperty("java.library.path", "lib");
+		System.setProperty("net.java.games.input.librarypath", new File("natives").getAbsolutePath());
 		System.setProperty("org.lwjgl.librarypath", new File("natives").getAbsolutePath());
 		try {
 			AppGameContainer app = new AppGameContainer(new Tetris());

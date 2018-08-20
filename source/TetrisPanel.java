@@ -604,8 +604,26 @@ class TetrisPanel extends PieceView
 
 	private void refillQueue()
 	{
-		while (pieceQueue.size() < 1 || (previews != null && pieceQueue.size() < previews.size()))
-			pieceQueue.offer(r.nextInt(pieces.length));
+		// while (pieceQueue.size() < 1 || (previews != null && pieceQueue.size() < previews.size()))
+		// 	pieceQueue.offer(r.nextInt(pieces.length));
+
+		if (pieceQueue.size() < 1 || (previews != null && pieceQueue.size() < previews.size())) {
+			int[] piece_bag = new int[pieces.length];
+			for (int i = 0; i < piece_bag.length; i++)
+				piece_bag[i] = i;
+
+			// shuffle
+			for (int i = piece_bag.length - 1; i >= 1; i--) {
+				int j = r.nextInt(i+1);
+
+				int tmp = piece_bag[i];
+				piece_bag[i] = piece_bag[j];
+				piece_bag[j] = tmp;
+			}
+
+			for (int e : piece_bag)
+				pieceQueue.offer(e);
+		}
 	}
 
 	private static TileState getStateForIndex(int index)
